@@ -146,5 +146,5 @@ export async function installDaemonLaunch(
   const plistPath = `$HOME/Library/LaunchAgents/${name}.plist`;
   await p.installContents([[daemonPlist, plistPath]]);
   await p.exec(`launchctl unload -w "${plistPath}" || true`);
-  await p.exec(`launchctl load -w ${plistPath} || exit`);
+  await p.exec(`launchctl load -w "${plistPath}" || exit`);
 }
