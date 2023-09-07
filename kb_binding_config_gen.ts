@@ -113,9 +113,8 @@ export class BindingConfigGen {
         value: layer,
       })),
       ...toMapArray(context.application, (app) => ({
-        type: "variable_if" as const,
-        name: VAR["application"],
-        value: app,
+        type: "frontmost_application_if" as const,
+        bundle_identifiers: [app],
       })),
       ...toMapArray(context.specifier, (spec) => ({
         type: "variable_if" as const,

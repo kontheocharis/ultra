@@ -29,7 +29,6 @@ export const VAR = {
   mode: "ultra_mode",
   layer: "ultra_layer",
   operator: "ultra_operator",
-  application: "ultra_application",
   specifier: "ultra_specifier",
 } as const;
 export type Var = (typeof VAR)[keyof typeof VAR];

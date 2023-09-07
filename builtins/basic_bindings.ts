@@ -63,6 +63,7 @@ export function installBasicBindings(U: Ultra) {
     moveToDisplay,
     moveToSpace,
     focusSpace,
+    applescript,
   } = U.commonActions;
 
   U.addMappings([
@@ -510,7 +511,7 @@ export function installBasicBindings(U: Ultra) {
     U.addMappings([
       [
         layerBinding(key),
-        [[context({ layer: "application" }), [focusWindow(direction)]]],
+        [[context({ layer: "window" }), [focusWindow(direction)]]],
       ],
       [
         layerBinding(key, ["left_shift"]),
@@ -628,6 +629,97 @@ export function installBasicBindings(U: Ultra) {
             ],
           ],
           [context({ mode: "visual" }), [action, setMode("normal")]],
+        ],
+      ],
+    ]);
+  }
+
+  // Browser bindings
+  for (const [appBundle, appName] of [
+    ["^com\\.brave\\.Browser$", "Brave Browser"],
+  ] as const) {
+    const browser = context({ layer: "application", application: appBundle });
+
+    const focusInputJs = `
+    var el = document.querySelectorAll('input:not([type="hidden"])')[0];
+    el.focus();
+    el.setSelectionRange(1e9,1e9);
+    `;
+    const execJs = (js_str: string) =>
+      applescript(
+        `tell application "${appName}" to execute (active tab of window 1) javascript ${JSON.stringify(
+          js_str
+        )}`
+      );
+
+    U.addMappings([
+      [
+        layerBinding("k"),
+        [[browser, [binding("open_bracket", ["left_shift", "command"])]]],
+      ],
+      [
+        layerBinding("j"),
+        [[browser, [binding("close_bracket", ["left_shift", "command"])]]],
+      ],
+      [layerBinding("h"), [[browser, [binding("open_bracket", ["command"])]]]],
+      [layerBinding("l"), [[browser, [binding("close_bracket", ["command"])]]]],
+      [
+        layerBinding("o"),
+        [
+          [
+            context({ ...browser, mode: "normal" }),
+            [binding("l", ["command"]), setMode("search")],
+          ],
+          [
+            context({ ...browser, mode: "native" }),
+            [binding("l", ["command"])],
+          ],
+        ],
+      ],
+      [
+        layerBinding("t"),
+        [
+          [
+            context({ ...browser, mode: "normal" }),
+            [binding("t", ["command"]), setMode("search")],
+          ],
+          [
+            context({ ...browser, mode: "native" }),
+            [binding("t", ["command"])],
+          ],
+        ],
+      ],
+      [
+        layerBinding("u"),
+        [[browser, [binding("t", ["command", "left_shift"])]]],
+      ],
+      [
+        layerBinding("f"),
+        [
+          [
+            browser,
+            [binding("a", ["command", "left_shift"]), setMode("search")],
+          ],
+        ],
+      ],
+      [layerBinding("r"), [[browser, [binding("r", ["command"])]]]],
+      [layerBinding("d"), [[browser, [binding("w", ["command"])]]]],
+      [
+        layerBinding("c"),
+        [[browser, [binding("i", ["command", "left_option"])]]],
+      ],
+      [
+        layerBinding("i"),
+
+        [
+          [
+            context({
+              ...browser,
+              mode: "normal",
+            }),
+            [setMode("search"), execJs(focusInputJs)],
+          ],
+          [context({ ...browser, mode: "insert" }), [execJs(focusInputJs)]],
         ],
       ],
     ]);
