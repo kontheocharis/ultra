@@ -448,7 +448,7 @@ export function installBasicBindings(U: Ultra) {
       [
         [
           context({ layer: "window" }),
-          [binding("f12", ["command"])], // bind cmd-f12 to spotlight/alfred for this to work
+          [binding("spacebar", ["command"])], // bind cmd-f12 to spotlight/alfred for this to work
         ],
       ],
     ],

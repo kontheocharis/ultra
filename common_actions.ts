@@ -52,7 +52,7 @@ export class CommonActions {
         `${this.opts.hasSpaceCheckScript} ${direction} && yabai -m space --focus ${direction}`
       );
     } else if (direction == "next") {
-      return this.bindings.binding("right_arrow");
+      return this.bindings.binding("right_arrow", ["left_control"]);
     } else {
       return this.bindings.binding("left_arrow", ["left_control"]);
     }
