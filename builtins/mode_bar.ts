@@ -73,6 +73,9 @@ const modeByApp = new Map<string, Mode>();
 
 export const MODE_SWITCH_DAEMON: Daemon<ModeSwitchDaemonMessage> = {
   name: "mode_switch_daemon",
+  async startup(_, p) {
+    await p.exec(`open -a AnyBar`);
+  },
   async handleMessage(message: ModeSwitchDaemonMessage, U, p) {
     const { executeCommand, actionAsCommand } = U.commonActions;
     switch (message.kind) {

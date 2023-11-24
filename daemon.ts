@@ -1,10 +1,9 @@
 import { powar } from "./deps.ts";
 import { TextLineStream, slugify } from "./deps.ts";
 import { Action, Binding, Command } from "./base.ts";
-import { UltraOpts } from "./mod.ts";
+import { Ultra, UltraOpts } from "./mod.ts";
 import { CommonActions } from "./common_actions.ts";
 import { CommonBindings } from "./common_bindings.ts";
-
 export interface UltraDaemonOpts<Ds> extends UltraOpts {
   daemons: (U: UltraDaemon<Ds>, p: powar.ModuleApi) => Ds;
 }
@@ -55,13 +54,13 @@ export type ExecutionTarget = Exclude<Action, Binding>;
 
 export interface Daemon<D> {
   name: string;
+  startup?: <Ds>(U: UltraDaemon<Ds>, p: powar.ModuleApi) => Promise<void>;
   handleMessage: <Ds>(
     message: D,
     U: UltraDaemon<Ds>,
     p: powar.ModuleApi
   ) => Promise<void>;
 }
-
 export function sendToDaemon<D>(spec: Daemon<D>, data: D): Command {
   return {
     kind: "command",
@@ -78,6 +77,11 @@ export async function launchDaemon<D, Ds>(
 ): Promise<never> {
   const listener = await getUnixSocketConnForDaemon(spec);
   p.info(`Listening for messages on ${getUnixSocketPathForDaemon(spec)}`);
+
+  if (typeof spec.startup !== "undefined") {
+    await spec.startup(U, p);
+    p.info(`Ran startup for daemon ${spec.name}`);
+  }
 
   while (true) {
     try {
