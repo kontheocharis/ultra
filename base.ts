@@ -71,7 +71,8 @@ export type Action =
 export interface Binding {
   kind: "binding";
   key: ExtendedKey;
-  modifiers: readonly ExtendedKey[];
+  modifiers?: readonly ExtendedKey[];
+  anyModifer?: boolean;
   specifier: Specifier;
 }
 
@@ -100,6 +101,17 @@ export interface Context {
   specifier?: Specifier | null;
   extra?: kb.Condition | kb.Condition[];
 }
+
+// This is a shortcut for matching any context.
+export const ANY_CONTEXT: Context = {
+  mode: null,
+  notMode: [],
+  operator: null,
+  layer: null,
+  application: null,
+  specifier: null,
+  extra: [],
+};
 
 export function fillContextDefaults({
   mode = null,

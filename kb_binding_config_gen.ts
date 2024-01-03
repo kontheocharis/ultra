@@ -64,13 +64,29 @@ export class BindingConfigGen {
   }: Mapping): kb.Manipulator[] => {
     return byContext.map(({ context, targets }) => {
       const ctx = fillContextDefaults(context);
+
+      const anyModifierOpt =
+        binding.anyModifer == true
+          ? { optional: ["any" as kb.Key] }
+          : undefined;
+
+      const modifiers =
+        typeof binding.modifiers !== "undefined"
+          ? {
+              modifiers: {
+                mandatory: binding.modifiers as kb.Key[],
+                ...anyModifierOpt,
+              },
+            }
+          : typeof anyModifierOpt !== "undefined"
+          ? { modifiers: anyModifierOpt }
+          : {};
+
       return {
         type: "basic",
         from: {
           key_code: binding.key as kb.Key,
-          modifiers: {
-            mandatory: binding.modifiers as kb.Key[],
-          },
+          ...modifiers,
         },
         conditions: this.encodeContextConditions(ctx),
         ...this.encodeBindingActions(targets),

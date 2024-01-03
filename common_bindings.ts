@@ -8,7 +8,7 @@ export function binding(
   return {
     kind: "binding",
     key,
-    modifiers: modifiers ?? [],
+    modifiers,
     specifier,
   };
 }
@@ -141,7 +141,10 @@ export class CommonBindings {
   mod = (mod: ExtendedKey | ExtendedKey[], binding: Binding): Binding => {
     return {
       ...binding,
-      modifiers: [...binding.modifiers, ...(Array.isArray(mod) ? mod : [mod])],
+      modifiers: [
+        ...(binding.modifiers ?? []),
+        ...(Array.isArray(mod) ? mod : [mod]),
+      ],
     };
   };
 
