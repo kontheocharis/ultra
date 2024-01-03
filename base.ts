@@ -98,6 +98,7 @@ export interface Context {
   layer?: Layer | null;
   application?: Application | null;
   specifier?: Specifier | null;
+  extra?: kb.Condition | kb.Condition[];
 }
 
 export function fillContextDefaults({
@@ -107,6 +108,7 @@ export function fillContextDefaults({
   layer = "none",
   application = null,
   specifier = "none",
+  extra = [],
 }: Context): Context {
   return {
     mode,
@@ -115,6 +117,7 @@ export function fillContextDefaults({
     layer,
     application,
     specifier,
+    extra,
   };
 }
 

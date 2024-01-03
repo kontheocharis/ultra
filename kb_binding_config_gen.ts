@@ -121,6 +121,7 @@ export class BindingConfigGen {
         name: VAR["specifier"],
         value: spec,
       })),
+      ...toMapArray(context.extra, (cond) => cond),
     ];
   };
 
