@@ -1,5 +1,6 @@
 import { Command, command } from "./base.ts";
 import { slugify } from "./deps.ts";
+import { UltraOpts } from "./mod.ts";
 
 export type EventHandler =
   | {
@@ -23,7 +24,10 @@ export type EventHandler =
       action: (processId: string) => Command;
     };
 
-export function registerEventHandler(handler: EventHandler): Command {
+export function registerEventHandler(
+  opts: UltraOpts,
+  handler: EventHandler
+): Command {
   const label = slugify(handler.label);
   const action = (() => {
     switch (handler.kind) {
@@ -41,6 +45,6 @@ export function registerEventHandler(handler: EventHandler): Command {
   const actionFile = `/tmp/ultra-event-handler-${label}`;
   Deno.writeTextFileSync(actionFile, action.command);
   return command(
-    `(yabai -m signal --remove ${label} || true) && yabai -m signal --add event=${handler.kind} action='/bin/sh ${actionFile}' label=${label}`
+    `(${opts.yabaiCliPath} -m signal --remove ${label} || true) && ${opts.yabaiCliPath} -m signal --add event=${handler.kind} action='/bin/sh ${actionFile}' label=${label}`
   );
 }

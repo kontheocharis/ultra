@@ -37,7 +37,7 @@ export async function refreshModeBar(p: powar.ModuleApi) {
 
 export async function installModeBar(U: Ultra, p: powar.ModuleApi) {
   U.addStartup(
-    registerEventHandler({
+    registerEventHandler(U.opts, {
       kind: "application_front_switched",
       label: "notify_app_switch_daemon",
       action: (processId: string) =>

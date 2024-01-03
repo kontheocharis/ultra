@@ -61,7 +61,6 @@ export function installBasicBindings(U: Ultra) {
     resizeWindow,
     focusDisplay,
     moveToDisplay,
-    moveToSpace,
     focusSpace,
     applescript,
   } = U.commonActions;
@@ -479,10 +478,7 @@ export function installBasicBindings(U: Ultra) {
     U.addMappings([
       [
         layerBinding(key),
-        [
-          [context({ layer: "window" }), [focusSpace(direction)]],
-          [context({ layer: "move" }), [moveToSpace(direction)]],
-        ],
+        [[context({ layer: "window" }), [focusSpace(direction)]]],
       ],
     ]);
   }
@@ -528,10 +524,6 @@ export function installBasicBindings(U: Ultra) {
       [
         layerBinding(key),
         [[context({ layer: "window" }), [focusSpace(direction)]]],
-      ],
-      [
-        layerBinding(key, ["left_shift"]),
-        [[context({ layer: "window" }), [moveToSpace(direction)]]],
       ],
     ]);
   }

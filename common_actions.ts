@@ -35,23 +35,21 @@ export class CommonActions {
   constructor(public opts: UltraOpts, private bindings: CommonBindings) {}
 
   focusWindow = (direction: CompassDirection): Command => {
-    return command(`yabai -m window --focus ${direction}`);
+    return command(`${this.opts.yabaiCliPath} -m window --focus ${direction}`);
   };
 
   moveWindow = (direction: CompassDirection): Command => {
-    return command(`yabai -m window --warp ${direction}`);
+    return command(`${this.opts.yabaiCliPath} -m window --warp ${direction}`);
   };
 
   resizeWindow = (resize_command: string): Command => {
-    return command(`yabai -m window --resize ${resize_command}`);
+    return command(
+      `${this.opts.yabaiCliPath} -m window --resize ${resize_command}`
+    );
   };
 
   focusSpace = (direction: Direction): Action => {
-    if (this.opts.yabaiScriptingAddon) {
-      return command(
-        `${this.opts.hasSpaceCheckScript} ${direction} && yabai -m space --focus ${direction}`
-      );
-    } else if (direction == "next") {
+    if (direction == "next") {
       return this.bindings.binding("right_arrow", ["left_control"]);
     } else {
       return this.bindings.binding("left_arrow", ["left_control"]);
@@ -59,37 +57,35 @@ export class CommonActions {
   };
 
   focusDisplay = (direction: Direction): Command => {
-    return command(`yabai -m display --focus ${direction}`);
-  };
-
-  moveToSpace = (direction: Direction): Command => {
-    return command(
-      `${this.opts.hasSpaceCheckScript} ${direction} && yabai -m window --space ${direction}`
-    );
+    return command(`${this.opts.yabaiCliPath} -m display --focus ${direction}`);
   };
 
   moveToDisplay = (direction: Direction): Command => {
-    return command(`yabai -m window --display ${direction}`);
+    return command(
+      `${this.opts.yabaiCliPath} -m window --display ${direction}`
+    );
   };
 
   closeWindow = (): Command => {
-    return command(`yabai -m window --close`);
+    return command(`${this.opts.yabaiCliPath} -m window --close`);
   };
 
   toggleFloat = (): Command => {
     return command(
-      `yabai -m window --toggle float; yabai -m window --grid 6:4:1:1:2:4`
+      `${this.opts.yabaiCliPath} -m window --toggle float; ${this.opts.yabaiCliPath} -m window --grid 6:4:1:1:2:4`
     );
   };
 
   toggleZen = (): Command => {
     return command(
-      `yabai -m window --toggle float; yabai -m window --grid 1:4:1:1:2:1`
+      `${this.opts.yabaiCliPath} -m window --toggle float; ${this.opts.yabaiCliPath} -m window --grid 1:4:1:1:2:1`
     );
   };
 
   toggleFullscreen = (): Command => {
-    return command(`yabai -m window --toggle native-fullscreen`);
+    return command(
+      `${this.opts.yabaiCliPath} -m window --toggle native-fullscreen`
+    );
   };
 
   setUltraVarsFromCli = (data: SetUltraVars): Command => {
@@ -134,6 +130,6 @@ export class CommonActions {
   };
 
   registerEventHandler = (handler: EventHandler): Command => {
-    return registerEventHandler(handler);
+    return registerEventHandler(this.opts, handler);
   };
 }
