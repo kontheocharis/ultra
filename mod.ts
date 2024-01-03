@@ -10,7 +10,10 @@ import { MappingCreate, BindingConfigGen } from "./kb_binding_config_gen.ts";
 
 export interface UltraOpts extends powar.ModuleConfig {
   shellWrapper: (cmd: string) => string;
-  karabinerWritePath: string;
+  karabinerWrite: {
+    profileName: string;
+    configPath: string;
+  };
   karabinerCliPath: string;
   yabaiCliPath: string;
   daemonLaunch?: { name: string; path: string }[];

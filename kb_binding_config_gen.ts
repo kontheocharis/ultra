@@ -33,21 +33,15 @@ export class BindingConfigGen {
       description: "Ultra",
       manipulators: this.kbManipulators,
     });
-    const karabinerJson = {
-      title: "Ultra (new)",
-      author: "Ultra",
-      rules: [
-        {
-          description: "Ultra (new)",
-          manipulators: this.kbManipulators,
-        },
-      ],
-    };
 
-    await p.installContents([
-      [JSON.stringify(karabinerJson), this.opts.karabinerWritePath],
-    ]);
-    p.info(`Installed to '${this.opts.karabinerWritePath}'`);
+    await mods.writeToProfile(
+      this.opts.karabinerWrite.profileName,
+      this.opts.karabinerWrite.configPath
+    );
+
+    p.info(
+      `Installed to '${this.opts.karabinerWrite.configPath}' under profile ${this.opts.karabinerWrite.profileName}`
+    );
   };
 
   addMappings = (entries: MappingCreate[]): void => {
