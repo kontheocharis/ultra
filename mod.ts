@@ -4,9 +4,9 @@ export type { Daemon, ExecutionTarget } from "./daemon.ts";
 import { Action, Command, Mode } from "./base.ts";
 import { powar } from "./deps.ts";
 import { installDaemonLaunch } from "./daemon.ts";
-import { CommonActions } from "./common_actions.ts";
+import { CommonActions, defaultVarValues } from "./common_actions.ts";
 import { CommonBindings } from "./common_bindings.ts";
-import { MappingCreate, BindingConfigGen } from "./kb_binding_config_gen.ts";
+import { BindingConfigGen, MappingCreate } from "./kb_binding_config_gen.ts";
 
 export interface UltraOpts extends powar.ModuleConfig {
   shellWrapper: (cmd: string) => string;
@@ -78,6 +78,11 @@ class UltraImpl implements Ultra {
 
     await this.configGen.install(p);
     p.info(`Installed Ultra configuration`);
+
+    await p.exec(
+      this.commonActions.setUltraVarsFromCli(defaultVarValues).command,
+    );
+    p.info(`Set default Ultra variables`);
 
     if (typeof this.opts.daemonLaunch !== "undefined") {
       for (const daemon of this.opts.daemonLaunch) {

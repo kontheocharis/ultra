@@ -1,6 +1,7 @@
 import {
   Action,
   Command,
+  command,
   Layer,
   Mode,
   Operator,
@@ -10,7 +11,6 @@ import {
   SetSpecifier,
   Specifier,
   VAR,
-  command,
 } from "./base.ts";
 import { UltraOpts } from "./mod.ts";
 import { Daemon, sendToDaemon } from "./daemon.ts";
@@ -26,6 +26,13 @@ export type SetUltraVars = {
     application: string;
     specifier: Specifier;
   }[V];
+};
+
+export const defaultVarValues: SetUltraVars = {
+  mode: "native",
+  layer: "none",
+  operator: "normal",
+  specifier: "none",
 };
 
 export type CompassDirection = "north" | "south" | "east" | "west";
@@ -44,7 +51,7 @@ export class CommonActions {
 
   resizeWindow = (resize_command: string): Command => {
     return command(
-      `${this.opts.yabaiCliPath} -m window --resize ${resize_command}`
+      `${this.opts.yabaiCliPath} -m window --resize ${resize_command}`,
     );
   };
 
@@ -62,7 +69,7 @@ export class CommonActions {
 
   moveToDisplay = (direction: Direction): Command => {
     return command(
-      `${this.opts.yabaiCliPath} -m window --display ${direction}`
+      `${this.opts.yabaiCliPath} -m window --display ${direction}`,
     );
   };
 
@@ -72,31 +79,33 @@ export class CommonActions {
 
   toggleFloat = (): Command => {
     return command(
-      `${this.opts.yabaiCliPath} -m window --toggle float; ${this.opts.yabaiCliPath} -m window --grid 6:4:1:1:2:4`
+      `${this.opts.yabaiCliPath} -m window --toggle float; ${this.opts.yabaiCliPath} -m window --grid 6:4:1:1:2:4`,
     );
   };
 
   toggleZen = (): Command => {
     return command(
-      `${this.opts.yabaiCliPath} -m window --toggle float; ${this.opts.yabaiCliPath} -m window --grid 1:4:1:1:2:1`
+      `${this.opts.yabaiCliPath} -m window --toggle float; ${this.opts.yabaiCliPath} -m window --grid 1:4:1:1:2:1`,
     );
   };
 
   toggleFullscreen = (): Command => {
     return command(
-      `${this.opts.yabaiCliPath} -m window --toggle native-fullscreen`
+      `${this.opts.yabaiCliPath} -m window --toggle native-fullscreen`,
     );
   };
 
   setUltraVarsFromCli = (data: SetUltraVars): Command => {
     return command(
-      `${this.opts.karabinerCliPath} --set-variables '${JSON.stringify(
-        Object.fromEntries(
-          (Object.entries(data) as [keyof typeof VAR, string][]).map(
-            ([k, v]) => [VAR[k], v]
-          )
+      `${this.opts.karabinerCliPath} --set-variables '${
+        JSON.stringify(
+          Object.fromEntries(
+            (Object.entries(data) as [keyof typeof VAR, string][]).map(
+              ([k, v]) => [VAR[k], v],
+            ),
+          ),
         )
-      )}'`
+      }'`,
     );
   };
 
@@ -105,7 +114,7 @@ export class CommonActions {
   };
 
   actionAsCommand = (
-    action: Command | SetMode | SetLayer | SetOperator | SetSpecifier
+    action: Command | SetMode | SetLayer | SetOperator | SetSpecifier,
   ): Command => {
     switch (action.kind) {
       case "command":

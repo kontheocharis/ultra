@@ -1,11 +1,11 @@
 import { powar } from "./deps.ts";
 import {
-  VAR,
   Action,
   Binding,
-  Mapping,
-  fillContextDefaults,
   Context,
+  fillContextDefaults,
+  Mapping,
+  VAR,
 } from "./base.ts";
 import { kb } from "./deps.ts";
 import { ActionHook, UltraOpts } from "./mod.ts";
@@ -36,18 +36,18 @@ export class BindingConfigGen {
 
     await mods.writeToProfile(
       this.opts.karabinerWrite.profileName,
-      this.opts.karabinerWrite.configPath
+      this.opts.karabinerWrite.configPath,
     );
 
     p.info(
-      `Installed to '${this.opts.karabinerWrite.configPath}' under profile ${this.opts.karabinerWrite.profileName}`
+      `Installed to '${this.opts.karabinerWrite.configPath}' under profile ${this.opts.karabinerWrite.profileName}`,
     );
   };
 
   addMappings = (entries: MappingCreate[]): void => {
     for (const { binding, byContext } of mappings(entries)) {
       this.kbManipulators.push(
-        ...this.encodeMappingAsManipulators({ binding, byContext })
+        ...this.encodeMappingAsManipulators({ binding, byContext }),
       );
     }
   };
@@ -59,22 +59,20 @@ export class BindingConfigGen {
     return byContext.map(({ context, targets }) => {
       const ctx = fillContextDefaults(context);
 
-      const anyModifierOpt =
-        binding.anyModifer == true
-          ? { optional: ["any" as kb.Key] }
-          : undefined;
+      const anyModifierOpt = binding.anyModifer == true
+        ? { optional: ["any" as kb.Key] }
+        : undefined;
 
-      const modifiers =
-        typeof binding.modifiers !== "undefined"
-          ? {
-              modifiers: {
-                mandatory: binding.modifiers as kb.Key[],
-                ...anyModifierOpt,
-              },
-            }
-          : typeof anyModifierOpt !== "undefined"
-          ? { modifiers: anyModifierOpt }
-          : {};
+      const modifiers = typeof binding.modifiers !== "undefined"
+        ? {
+          modifiers: {
+            mandatory: binding.modifiers as kb.Key[],
+            ...anyModifierOpt,
+          },
+        }
+        : typeof anyModifierOpt !== "undefined"
+        ? { modifiers: anyModifierOpt }
+        : {};
 
       return {
         type: "basic",
@@ -91,7 +89,7 @@ export class BindingConfigGen {
   private encodeContextConditions = (context: Context): kb.Condition[] => {
     function toMapArray<T, U>(
       value: T | readonly T[] | null | undefined,
-      map: (value: T) => U
+      map: (value: T) => U,
     ): readonly U[] {
       if (typeof value === "undefined" || value === null) {
         return [];
@@ -136,7 +134,7 @@ export class BindingConfigGen {
   };
 
   private encodeBindingActions = (
-    targets: readonly (Action | readonly Action[])[]
+    targets: readonly (Action | readonly Action[])[],
   ): Pick<kb.Manipulator, "to" | "to_after_key_up"> => {
     type Ret = Pick<kb.Manipulator, "to" | "to_after_key_up">;
     return targets
@@ -251,7 +249,7 @@ export class BindingConfigGen {
             ...(acc.to_after_key_up ?? []),
             ...(val.to_after_key_up ?? []),
           ],
-        })
+        }),
       );
   };
 }

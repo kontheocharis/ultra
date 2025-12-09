@@ -113,10 +113,7 @@ async function getUnixSocketConnForDaemon<D>(
 ): Promise<Deno.Listener> {
   const path = getUnixSocketPathForDaemon(spec);
   await powar.execute(`rm -f ${path}`);
-  return await Deno.listen({
-    transport: "unix",
-    path: getUnixSocketPathForDaemon(spec),
-  });
+  return await Deno.listen({ transport: "unix", path });
 }
 
 export async function installDaemonLaunch(
