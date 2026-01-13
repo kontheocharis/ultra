@@ -26,12 +26,11 @@ function colourForMode(mode: Mode): string {
   }
 }
 
-export async function refreshModeBar(p: powar.ModuleApi) {
-  const currentMode = (
-    await p.exec(`jq -r '.variables.${VAR.mode}' "${KARABINER_STATE_FILE}"`)
-  ).stdoutAsString();
+export async function refreshModeBar(p: powar.ModuleApi, mode: Mode) {
+  const colour = colourForMode(mode);
+  p.info(`Sending colour ${colour} for mode ${mode}`);
   return await p.exec("nc -4u -w0 localhost 1738", {
-    stdin: colourForMode(currentMode.trim() as Mode),
+    stdin: colour,
   });
 }
 
@@ -85,7 +84,7 @@ export const MODE_SWITCH_DAEMON: Daemon<ModeSwitchDaemonMessage> = {
           p.info(`Setting the mode of app ${currentApp} to ${message.newMode}`);
           modeByApp.set(currentApp, message.newMode);
         }
-        await refreshModeBar(p);
+        await refreshModeBar(p, message.newMode);
         break;
       }
       case "app_switch": {
@@ -95,12 +94,13 @@ export const MODE_SWITCH_DAEMON: Daemon<ModeSwitchDaemonMessage> = {
         if (typeof mode !== "undefined") {
           p.info(`Restoring the mode of app ${currentApp} to ${mode}`);
           await executeCommand(actionAsCommand(setMode(mode)));
+          await refreshModeBar(p, mode);
         } else {
           p.info(`No mode set for app ${currentApp}, setting to native`);
           await executeCommand(actionAsCommand(setMode("native")));
           modeByApp.set(currentApp, "native");
+          await refreshModeBar(p, "native");
         }
-        await refreshModeBar(p);
         break;
       }
     }
